@@ -1,0 +1,117 @@
+1.| 超参数 | 推荐值 |
+|---|---:|
+| LSTM 隐藏单元数 | 64 |
+| LSTM 层数 | 1 |
+| 分类器 Dropout | 0.3 |
+| 优化器 | AdamW |
+| 学习率 | 0.001 |
+| 权重衰减 | 0.0001 |
+| Batch size | 64 |
+| 最大训练轮数 | 30 |
+| 早停耐心值 | 8 轮 |
+| 梯度裁剪上限 | 1.0 |
+| 类别权重 | 训练集频数倒数的平方根 |
+| 随机种子 | 42 |
+
+
+2.第一次实验和课堂代码对比：
+| 项目 | 你当前的配置 | 课堂最终版本 |
+|---|---|---|
+| LSTM 隐藏单元数 | **64** | **128** |
+| LSTM 层数 | **1 层** | **2 层** |
+| LSTM 层间 Dropout | **0**，单层不使用 | **0.2** |
+| 分类器 Dropout | **0.5** | **0.3** |
+| 分类器维度 | `64 → 64 → 5` | `128 → 64 → 5` |
+| 模型参数量 | **98,181** | **360,837** |
+| 早停耐心值 | **8 轮** | **5 轮** |
+| 类别权重 | 根据训练集频数倒数的平方根计算 | 固定为 **`[1, 5, 2.5, 2.5, 2.5]`** |
+| 数据划分 | **按患者**，约 70%/15%/15% | **随机打乱心拍**，训练/测试 80%/20% |
+| 最佳模型选择 | **验证集 Macro-F1** | 实际代码使用**测试集 Accuracy** |
+| 使用记录 | **44 条** | **43 条** |
+| 每轮训练批次打乱 | `shuffle=True` | 最终代码中被重新定义为 `False` |
+
+
+
+3..
+& 'F:\实验文件夹\lwnet-master0\.venv\Scripts\python.exe' 'G:\深度学习实验心拍\code\train.py' `
+  --model lstm --input-size 300 --pooling last `
+  --hidden-size 64 --num-layers 1 --recurrent-dropout 0 `
+  --classifier-dropout 0.5 --loss weighted --weight-power 0.5 `
+  --lr 0.001 --weight-decay 0.0001 --batch-size 64 `
+  --epochs 30 --patience 8 --clip-grad 1.0 --seed 42 --device cuda
+
+
+
+4.第二次网络架构改变：
+LSTM 隐藏单元：128
+LSTM 层数：2
+分类器维度：128→128→64→5
+参数量：377,349
+
+5.更改评价方式（与课程设计对齐）
+& 'F:\实验文件夹\lwnet-master0\.venv\Scripts\python.exe' 'G:\深度学习实验心拍\code\train.py' `
+  --evaluation-protocol classroom --test-fraction 0.2 `
+  --model lstm --input-size 300 --pooling last `
+  --hidden-size 128 --num-layers 2 --recurrent-dropout 0.2 `
+  --classifier-hidden-sizes 128 64 --classifier-dropout 0.5 `
+  --loss weighted --weight-power 0.5 `
+  --lr 0.001 --weight-decay 0.0001 --batch-size 64 `
+  --epochs 30 --patience 8 --clip-grad 1.0 --seed 42 --device cuda
+
+20epoch早停
+
+& 'F:\实验文件夹\lwnet-master0\.venv\Scripts\python.exe' 'G:\深度学习实验心拍\code\train.py' `
+  --evaluation-protocol classroom --test-fraction 0.2 `
+  --model lstm --input-size 300 --pooling last `
+  --hidden-size 128 --num-layers 2 --recurrent-dropout 0.2 `
+  --classifier-hidden-sizes 128 64 --classifier-dropout 0.5 `
+  --loss weighted --weight-power 0.5 `
+  --lr 0.0003 --weight-decay 0.0001 --batch-size 64 `
+  --epochs 50 --patience 8 --clip-grad 1.0 --seed 42 --device cuda（学习率下降）
+
+& 'F:\实验文件夹\lwnet-master0\.venv\Scripts\python.exe' 'G:\深度学习实验心拍\code\train.py' `
+  --evaluation-protocol classroom --test-fraction 0.2 `
+  --model lstm --input-size 300 --pooling last `
+  --hidden-size 128 --num-layers 2 --recurrent-dropout 0.2 `
+  --classifier-hidden-sizes 128 64 --classifier-dropout 0.3 `
+  --loss weighted --weight-power 0.5 `
+  --lr 0.0003 --weight-decay 0.0001 --batch-size 64 `
+  --epochs 50 --patience 8 --clip-grad 1.0 --seed 42 --device cuda（dropout改变）
+
+& 'F:\实验文件夹\lwnet-master0\.venv\Scripts\python.exe' 'G:\深度学习实验心拍\code\train.py' `
+  --evaluation-protocol classroom --test-fraction 0.2 `
+  --model lstm --input-size 300 --pooling last `
+  --hidden-size 128 --num-layers 2 --recurrent-dropout 0.2 `
+  --classifier-hidden-sizes 128 64 --classifier-dropout 0.5 `
+  --loss weighted --weight-power 0.75 `
+  --lr 0.0003 --weight-decay 0.0001 --batch-size 64 `
+  --epochs 50 --patience 8 --clip-grad 1.0 --seed 42 --device cuda（加权改变）
+
+& 'F:\实验文件夹\lwnet-master0\.venv\Scripts\python.exe' 'G:\深度学习实验心拍\code\train.py' `
+  --evaluation-protocol classroom --test-fraction 0.2 `
+  --model lstm --input-size 300 --pooling last `
+  --hidden-size 128 --num-layers 2 --recurrent-dropout 0.2 `
+  --classifier-hidden-sizes 128 64 --classifier-dropout 0.5 `
+  --loss weighted --weight-power 0.5 `
+  --lr 0.0005 --weight-decay 0.0001 --batch-size 64 `
+  --epochs 50 --patience 8 --clip-grad 1.0 --seed 42 --device cuda（学习率改变）
+
+& 'F:\实验文件夹\lwnet-master0\.venv\Scripts\python.exe' 'G:\深度学习实验心拍\code\train.py' `
+  --evaluation-protocol classroom --test-fraction 0.2 `
+  --model lstm --input-size 300 --pooling last `
+  --hidden-size 128 --num-layers 2 --recurrent-dropout 0.2 `
+  --classifier-hidden-sizes 128 64 --classifier-dropout 0.5 `
+  --loss weighted --weight-power 0.5 `
+  --lr 0.0003 --scheduler cosine --min-lr 0.00001 `
+  --weight-decay 0.0001 --batch-size 64 `
+  --epochs 50 --patience 8 --clip-grad 1.0 --seed 42 --device cuda（余弦退火）
+
+& 'F:\实验文件夹\lwnet-master0\.venv\Scripts\python.exe' 'G:\深度学习实验心拍\code\train.py' `
+  --evaluation-protocol classroom --test-fraction 0.2 `
+  --model lstm --input-size 300 --pooling last `
+  --hidden-size 128 --num-layers 2 --recurrent-dropout 0.2 `
+  --classifier-hidden-sizes 128 64 --classifier-dropout 0.5 `
+  --loss weighted --weight-power 0.5 `
+  --lr 0.0003 --scheduler cosine --min-lr 0.00001 `
+  --weight-decay 0.0003 --batch-size 64 `
+  --epochs 50 --patience 8 --clip-grad 1.0 --seed 42 --device cuda（权重衰减）

@@ -1,0 +1,73 @@
+{
+  "data_dir": "G:\\深度学习实验心拍\\data",
+  "output_dir": "G:\\深度学习实验心拍\\outputs",
+  "records": null,
+  "model": "lstm",
+  "input_size": 300,
+  "hidden_size": 128,
+  "num_layers": 2,
+  "recurrent_dropout": 0.2,
+  "classifier_dropout": 0.5,
+  "classifier_hidden_sizes": [
+    128,
+    64
+  ],
+  "pooling": "last",
+  "loss": "weighted",
+  "weight_power": 0.5,
+  "lr": 0.0003,
+  "scheduler": "cosine",
+  "min_lr": 1e-05,
+  "weight_decay": 0.0003,
+  "batch_size": 64,
+  "epochs": 50,
+  "patience": 8,
+  "clip_grad": 1.0,
+  "seed": 42,
+  "evaluation_protocol": "classroom",
+  "val_fraction": 0.0,
+  "test_fraction": 0.2,
+  "device": "cuda",
+  "workers": 0,
+  "no_denoise": false,
+  "max_beats_per_record": 0,
+  "smoke_test": false,
+  "prepare_only": false,
+  "evaluate_test": false,
+  "model_config": {
+    "model_type": "lstm",
+    "hidden_size": 128,
+    "num_layers": 2,
+    "recurrent_dropout": 0.2,
+    "classifier_dropout": 0.5,
+    "pooling": "last",
+    "input_size": 300,
+    "classifier_hidden_sizes": [
+      128,
+      64
+    ]
+  },
+  "preprocess_config": {
+    "left": 99,
+    "right": 201,
+    "wavelet": "db5",
+    "wavelet_level": 9,
+    "denoise": true,
+    "trim_first": 10,
+    "trim_last": 5,
+    "max_beats_per_record": 0,
+    "seed": 42
+  },
+  "model_input_shape": [
+    null,
+    1,
+    300
+  ],
+  "device_used": "cuda",
+  "torch_version": "2.7.0+cu126",
+  "cuda_device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "development_subset": false,
+  "selection_metric": "test_accuracy",
+  "selection_split": "test",
+  "test_used_for_model_selection": true
+}
